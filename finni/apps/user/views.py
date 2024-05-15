@@ -1,4 +1,9 @@
+from datetime import datetime, timedelta, UTC
+
 import requests
+
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework import viewsets, status
 from rest_framework import permissions
@@ -15,6 +20,44 @@ class LoginViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    @swagger_auto_schema(
+        tags=["소셜 로그인"],
+        operation_id="카카오 로그인",
+        manual_parameters=[
+            openapi.Parameter(
+                "code",
+                openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description="인가 코드",
+            ),
+        ],
+        responses={
+            200: openapi.Response(
+                description="OK",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        "code": openapi.Schema(type=openapi.TYPE_INTEGER, description="응답 코드"),
+                        "message": openapi.Schema(type=openapi.TYPE_STRING, description="응답 메시지"),
+                        "user_email": openapi.Schema(type=openapi.TYPE_STRING, description="유저 이메일"),
+                        "access_token": openapi.Schema(type=openapi.TYPE_STRING, description="액세스 토큰"),
+                    }
+                )
+            ),
+            201: openapi.Response(
+                description="Created",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        "code": openapi.Schema(type=openapi.TYPE_INTEGER, description="응답 코드"),
+                        "message": openapi.Schema(type=openapi.TYPE_STRING, description="응답 메시지"),
+                        "user_email": openapi.Schema(type=openapi.TYPE_STRING, description="유저 이메일"),
+                        "access_token": openapi.Schema(type=openapi.TYPE_STRING, description="액세스 토큰"),
+                    }
+                )
+            ),
+        }
+    )
     def kakao(self, request, *args, **kwargs):
         response = requests.post(
             "https://kauth.kakao.com/oauth/token",
@@ -22,7 +65,7 @@ class LoginViewSet(viewsets.ModelViewSet):
                 "grant_type": "authorization_code",
                 "client_id": env("KAKAO_CLIENT_ID"),
                 "client_secret": env("KAKAO_CLIENT_SECRET"),
-                "redirect_url": f"{request.build_absolute_uri("/")}user/login/kakao/callback",
+                "redirect_url": f"{env("FRONTEND_URL")}/auth/kakao/callback",
                 "code": request.query_params.get("code"),
             }
         )
@@ -52,6 +95,44 @@ class LoginViewSet(viewsets.ModelViewSet):
 
             return self.create(request, *args, **kwargs)
 
+    @swagger_auto_schema(
+        tags=["소셜 로그인"],
+        operation_id="네이버 로그인",
+        manual_parameters=[
+            openapi.Parameter(
+                "code",
+                openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description="인가 코드",
+            ),
+        ],
+        responses={
+            200: openapi.Response(
+                description="OK",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        "code": openapi.Schema(type=openapi.TYPE_INTEGER, description="응답 코드"),
+                        "message": openapi.Schema(type=openapi.TYPE_STRING, description="응답 메시지"),
+                        "user_email": openapi.Schema(type=openapi.TYPE_STRING, description="유저 이메일"),
+                        "access_token": openapi.Schema(type=openapi.TYPE_STRING, description="액세스 토큰"),
+                    }
+                )
+            ),
+            201: openapi.Response(
+                description="Created",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        "code": openapi.Schema(type=openapi.TYPE_INTEGER, description="응답 코드"),
+                        "message": openapi.Schema(type=openapi.TYPE_STRING, description="응답 메시지"),
+                        "user_email": openapi.Schema(type=openapi.TYPE_STRING, description="유저"),
+                        "access": openapi.Schema(type=openapi.TYPE_STRING, description="액세스 토큰"),
+                    }
+                )
+            ),
+        }
+    )
     def naver(self, request, *args, **kwargs):
         response = requests.post(
             "https://nid.naver.com/oauth2.0/token",
@@ -59,7 +140,7 @@ class LoginViewSet(viewsets.ModelViewSet):
                 "grant_type": "authorization_code",
                 "client_id": env("NAVER_CLIENT_ID"),
                 "client_secret": env("NAVER_CLIENT_SECRET"),
-                "redirect_url": f"{request.build_absolute_uri("/")}user/login/naver/callback",
+                "redirect_url": f"{env("FRONTEND_URL")}/auth/naver/callback",
                 "code": request.query_params.get("code"),
                 "state": "naver_login",
             },
@@ -102,29 +183,39 @@ class LoginViewSet(viewsets.ModelViewSet):
         token = TokenObtainPairSerializer.get_token(user)
 
         if kwargs.get("headers"):
-            return Response(
+            res = Response(
                 {
-                    "user": user.email,
                     "code": 20100,
                     "message": "Created.",
-                    "token": {
-                        "access": str(token.access_token),
-                        "refresh": str(token),
-                    },
+                    "user_email": user.email,
+                    "access_token": str(token.access_token),
                 },
                 status=status.HTTP_201_CREATED,
                 headers=kwargs.get("headers"),
             )
         else:
-            return Response(
+            res = Response(
                 {
-                    "user": user.email,
                     "code": 20000,
-                    "message": "Login.",
-                    "token": {
-                        "access": str(token.access_token),
-                        "refresh": str(token),
-                    },
+                    "message": "Login Success.",
+                    "user_email": user.email,
+                    "access_token": str(token.access_token),
                 },
                 status=status.HTTP_200_OK,
             )
+
+        max_age = 7 * 24 * 60 * 60
+        expires = datetime.strftime(
+            datetime.now(UTC) + timedelta(seconds=max_age),
+            "%a, %d-%b-%Y %H:%M:%S GMT",
+        )
+        res.set_cookie(
+            "refresh_token",
+            str(token),
+            max_age=max_age,
+            expires=expires,
+            secure=True,
+            httponly=True,
+        )
+
+        return res

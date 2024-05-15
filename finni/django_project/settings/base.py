@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     "apps.user",
     # cors
     "corsheaders",
+    # swagger
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [
