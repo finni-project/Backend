@@ -127,7 +127,7 @@ class LoginViewSet(viewsets.ModelViewSet):
                         "code": openapi.Schema(type=openapi.TYPE_INTEGER, description="응답 코드"),
                         "message": openapi.Schema(type=openapi.TYPE_STRING, description="응답 메시지"),
                         "user_email": openapi.Schema(type=openapi.TYPE_STRING, description="유저"),
-                        "access": openapi.Schema(type=openapi.TYPE_STRING, description="액세스 토큰"),
+                        "access_token": openapi.Schema(type=openapi.TYPE_STRING, description="액세스 토큰"),
                     }
                 )
             ),
