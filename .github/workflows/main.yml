@@ -1,0 +1,48 @@
+name: ✨ FiNNi Backend CI/CD ✨
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    env:
+      working-directory: ./finni
+    steps:
+      - name: ✨ Update permission ✨
+        run: sudo chown -R ubuntu:ubuntu /home/ubuntu/actions-runner
+      - name: ✨ Checkout code ✨
+        uses: actions/checkout@v4
+      - name: ✨ Generate Environment Variables File ✨
+        run: |
+          cd finni/
+          touch .env
+          echo "DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY" >> .env
+          echo "DATABASE_NAME=$DATABASE_NAME" >> .env
+          echo "DATABASE_USER=$DATABASE_USER" >> .env
+          echo "DATABASE_PASSWORD=$DATABASE_PASSWORD" >> .env
+          echo "DATABASE_HOST=$DATABASE_HOST" >> .env
+          echo "DATABASE_PORT=$DATABASE_PORT" >> .env
+          echo "KAKAO_CLIENT_ID=$KAKAO_CLIENT_ID" >> .env
+          echo "KAKAO_CLIENT_SECRET=$KAKAO_CLIENT_SECRET" >> .env
+          echo "NAVER_CLIENT_ID=$NAVER_CLIENT_ID" >> .env
+          echo "NAVER_CLIENT_SECRET=$NAVER_CLIENT_SECRET" >> .env
+          echo "FRONTEND_URL=$FRONTEND_URL" >> .env
+        env:
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          DATABASE_USER: ${{ secrets.DATABASE_USER }}
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+          DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+          KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
+          KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+      - name: ✨ Deploy ✨
+        run: |
+          chmod +x /home/ubuntu/deploy.sh
+          sh /home/ubuntu/deploy.sh
