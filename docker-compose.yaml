@@ -13,9 +13,10 @@ services:
       args:
         - DJANGO_SETTINGS_MODULE=django_project.settings.docker
     entrypoint: ./wait-for-it.sh redis:6379 --
-    command: sh -c "poetry run python3 manage.py migrate && poetry run python3 manage.py collectstatic && poetry run gunicorn django_project.wsgi:application --bind 0.0.0.0:8000"
+    command: sh -c "poetry run python3 manage.py migrate && poetry run python3 manage.py collectstatic --no-input && poetry run gunicorn django_project.wsgi:application --bind 0.0.0.0:8000"
     ports:
       - "8000:8000"
     volumes:
       - ./finni:/finni/
+      - ./static:/finni/static
     working_dir: /finni
