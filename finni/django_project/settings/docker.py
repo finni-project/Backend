@@ -1,6 +1,6 @@
 from .base import *  # noqa: F403, F40
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
