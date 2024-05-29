@@ -13,7 +13,7 @@ urlpatterns = [
     ),
     path(
         "<int:pk>",
-        UserViewSet.as_view({"patch": "update", "delete": "destroy"}),
+        UserViewSet.as_view({"get": "retrieve", "patch": "update", "delete": "destroy"}),
     ),
     path(
         "token/refresh",

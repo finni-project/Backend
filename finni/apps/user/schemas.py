@@ -175,6 +175,43 @@ def logout_schema(view_function):
     return schema
 
 
+def retrieve_schema(view_function):
+    schema = swagger_auto_schema(
+        tags=["회원"],
+        operation_id="회원 조회",
+        request_body=no_body,
+        responses={
+            200: openapi.Response(
+                description="OK",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        "code": openapi.Schema(type=openapi.TYPE_INTEGER, description="응답 코드"),
+                        "message": openapi.Schema(type=openapi.TYPE_STRING, description="응답 메시지"),
+                        "result": openapi.Schema(
+                            type=openapi.TYPE_OBJECT,
+                            properties={
+                                "user": openapi.Schema(
+                                    type=openapi.TYPE_OBJECT,
+                                    properties={
+                                        "email": openapi.Schema(type=openapi.TYPE_STRING, description="이메일"),
+                                        "name": openapi.Schema(type=openapi.TYPE_STRING, description="이름"),
+                                        "birth": openapi.Schema(type=openapi.TYPE_STRING, description="생년월일"),
+                                    },
+                                    description="유저",
+                                ),
+                            },
+                            description="결과",
+                        ),
+                    }
+                )
+            ),
+        }
+    )(view_function)
+
+    return schema
+
+
 def update_schema(view_function):
     schema = swagger_auto_schema(
         tags=["회원"],

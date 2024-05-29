@@ -11,7 +11,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django_project.settings.base import env
 from .models import User
 from .schemas import kakao_schema, naver_schema, refresh_schema, verify_schema, logout_schema, update_schema, \
-    destroy_schema
+    destroy_schema, retrieve_schema
 from .serializers import UserSerializer
 
 
@@ -215,6 +215,21 @@ class AuthViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    @retrieve_schema
+    def retrieve(self, request, *args, **kwargs):
+        response = super(UserViewSet, self).retrieve(request, *args, **kwargs)
+
+        return Response(
+            data={
+                "code": 20000,
+                "message": "User retrieved.",
+                "result": {
+                    "user": response.data,
+                }
+            },
+            status=status.HTTP_200_OK,
+        )
 
     @update_schema
     def update(self, request, *args, **kwargs):
