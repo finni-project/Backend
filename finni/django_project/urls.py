@@ -39,6 +39,8 @@ schema_view = get_schema_view(
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("user/", include("apps.user.urls")),
+    path("", include("apps.bank.urls")),
+
     re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
     re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),
     path("swagger", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),

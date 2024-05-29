@@ -23,7 +23,7 @@ def kakao_schema(view_function):
                     properties={
                         "code": openapi.Schema(type=openapi.TYPE_INTEGER, description="응답 코드"),
                         "message": openapi.Schema(type=openapi.TYPE_STRING, description="응답 메시지"),
-                        "user_email": openapi.Schema(type=openapi.TYPE_STRING, description="유저 이메일"),
+                        "user_email": openapi.Schema(type=openapi.TYPE_STRING, description="회원 이메일"),
                         "access_token": openapi.Schema(type=openapi.TYPE_STRING, description="액세스 토큰"),
                     }
                 )
@@ -35,7 +35,7 @@ def kakao_schema(view_function):
                     properties={
                         "code": openapi.Schema(type=openapi.TYPE_INTEGER, description="응답 코드"),
                         "message": openapi.Schema(type=openapi.TYPE_STRING, description="응답 메시지"),
-                        "user_email": openapi.Schema(type=openapi.TYPE_STRING, description="유저 이메일"),
+                        "user_email": openapi.Schema(type=openapi.TYPE_STRING, description="회원 이메일"),
                         "access_token": openapi.Schema(type=openapi.TYPE_STRING, description="액세스 토큰"),
                     }
                 )
@@ -67,7 +67,7 @@ def naver_schema(view_function):
                     properties={
                         "code": openapi.Schema(type=openapi.TYPE_INTEGER, description="응답 코드"),
                         "message": openapi.Schema(type=openapi.TYPE_STRING, description="응답 메시지"),
-                        "user_email": openapi.Schema(type=openapi.TYPE_STRING, description="유저 이메일"),
+                        "user_email": openapi.Schema(type=openapi.TYPE_STRING, description="회원 이메일"),
                         "access_token": openapi.Schema(type=openapi.TYPE_STRING, description="액세스 토큰"),
                     }
                 )
@@ -79,7 +79,7 @@ def naver_schema(view_function):
                     properties={
                         "code": openapi.Schema(type=openapi.TYPE_INTEGER, description="응답 코드"),
                         "message": openapi.Schema(type=openapi.TYPE_STRING, description="응답 메시지"),
-                        "user_email": openapi.Schema(type=openapi.TYPE_STRING, description="유저"),
+                        "user_email": openapi.Schema(type=openapi.TYPE_STRING, description="회원"),
                         "access_token": openapi.Schema(type=openapi.TYPE_STRING, description="액세스 토큰"),
                     }
                 )
@@ -198,7 +198,7 @@ def retrieve_schema(view_function):
                                         "name": openapi.Schema(type=openapi.TYPE_STRING, description="이름"),
                                         "birth": openapi.Schema(type=openapi.TYPE_STRING, description="생년월일"),
                                     },
-                                    description="유저",
+                                    description="회원",
                                 ),
                             },
                             description="결과",
@@ -241,7 +241,7 @@ def update_schema(view_function):
                                         "name": openapi.Schema(type=openapi.TYPE_STRING, description="이름"),
                                         "birth": openapi.Schema(type=openapi.TYPE_STRING, description="생년월일"),
                                     },
-                                    description="유저",
+                                    description="회원",
                                 ),
                             },
                             description="결과",

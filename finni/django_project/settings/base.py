@@ -23,6 +23,10 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # apps
+    "apps.user",
+    "apps.bank",
+    # django
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -32,9 +36,6 @@ INSTALLED_APPS = [
     # django rest framework
     "rest_framework",
     "rest_framework_simplejwt",
-    # apps
-    "apps.user",
-    "apps.bank",
     # cors
     "corsheaders",
     # swagger
