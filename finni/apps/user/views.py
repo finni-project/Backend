@@ -215,6 +215,7 @@ class AuthViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     @retrieve_schema
     def retrieve(self, request, *args, **kwargs):
